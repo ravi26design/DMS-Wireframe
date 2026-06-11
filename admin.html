@@ -11592,10 +11592,18 @@
       document.getElementById('bellBtn')?.classList.remove('open');
       wrap.classList.toggle('open');
     });
+    const HM_LINKS = {
+      'Landing Page':   'website/index.html',
+      'About':          'website/about.html',
+      'Contact Us':     'website/contact.html',
+      'Terms of Use':   'website/terms.html',
+      'Privacy Policy': 'website/privacy.html'
+    };
     wrap.querySelectorAll('.hm-item').forEach(item => {
       item.addEventListener('click', () => {
         wrap.classList.remove('open');
-        window.showToast?.('Opening ' + item.dataset.hm + '…');
+        const url = HM_LINKS[item.dataset.hm];
+        if (url) window.location.href = url;
       });
     });
     document.addEventListener('click', (e) => {
