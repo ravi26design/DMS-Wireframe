@@ -11603,7 +11603,10 @@
       item.addEventListener('click', () => {
         wrap.classList.remove('open');
         const url = HM_LINKS[item.dataset.hm];
-        if (url) window.location.href = url;
+        if (url) {
+          try { sessionStorage.setItem('fesAuthedRole', window.currentRole || 'user'); } catch (e) {}
+          window.location.href = url;
+        }
       });
     });
     document.addEventListener('click', (e) => {
@@ -15964,6 +15967,7 @@
       loginWrap.classList.add('hidden');
       mainApp.classList.remove('hidden');
       applyRole(selectedRole);
+      try { sessionStorage.setItem('fesAuthedRole', selectedRole); } catch (e) {}
     });
 
     // Allow Enter key to login
@@ -15981,6 +15985,7 @@
       _logoutBtn.parentNode.replaceChild(newLogout, _logoutBtn);
       newLogout.addEventListener('click', () => {
         document.getElementById('profileChip')?.classList.remove('open');
+        try { sessionStorage.removeItem('fesAuthedRole'); } catch (e) {}
         mainApp.classList.add('hidden');
         loginWrap.classList.remove('hidden');
         // Reset role dropdown to Registered User (no Visitor flow)
@@ -15993,6 +15998,18 @@
         if (emailEl) emailEl.value = 'priya@fes.org.in';
       });
     }
+
+    // Returning from the public website (same session) → skip login, re-enter the app
+    try {
+      const authed = sessionStorage.getItem('fesAuthedRole');
+      if (authed && ROLE_PROFILES[authed]) {
+        selectedRole = authed;
+        document.getElementById('landingWrap')?.classList.add('hidden');
+        loginWrap.classList.add('hidden');
+        mainApp.classList.remove('hidden');
+        applyRole(authed);
+      }
+    } catch (e) {}
   })();
 
   /* ===== USER PROFILE PAGE ===== */
