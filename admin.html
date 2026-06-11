@@ -15916,14 +15916,14 @@
         document.getElementById('profileChip')?.classList.remove('open');
         mainApp.classList.add('hidden');
         loginWrap.classList.remove('hidden');
-        // Reset role dropdown to Visitor
-        selectedRole = 'visitor';
+        // Reset role dropdown to Registered User (no Visitor flow)
+        selectedRole = 'user';
         const rdMenuEl = document.getElementById('roleDropdownMenu');
         rdMenuEl?.querySelectorAll('.role-dropdown-option').forEach(o => o.classList.remove('selected'));
-        rdMenuEl?.querySelector('[data-role="visitor"]')?.classList.add('selected');
-        if (rdLabel) rdLabel.textContent = 'Visitor';
+        rdMenuEl?.querySelector('[data-role="user"]')?.classList.add('selected');
+        if (rdLabel) rdLabel.textContent = 'Registered User';
         const emailEl = document.getElementById('loginEmail');
-        if (emailEl) emailEl.value = 'arjun@fes.org.in';
+        if (emailEl) emailEl.value = 'priya@fes.org.in';
       });
     }
   })();
