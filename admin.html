@@ -1522,6 +1522,8 @@
   .edit-lock-bar.you .ell-avatar { background: #fff; color: var(--ink); }
   .edit-lock-bar .ell-text { flex: 1; line-height: 1.45; }
   .edit-lock-bar .ell-text b { font-weight: 700; }
+  .edit-lock-bar .ell-timer { flex: none; font-size: 11.5px; font-weight: 700; font-variant-numeric: tabular-nums; color: var(--ink-2); padding: 4px 9px; border-radius: 6px; background: var(--surface-3); border: 1px solid var(--line); white-space: nowrap; }
+  .edit-lock-bar.you .ell-timer { background: rgba(255,255,255,0.15); border-color: rgba(255,255,255,0.35); color: #fff; }
   .edit-lock-bar .ell-btn { flex: none; padding: 5px 12px; border-radius: 6px; border: 1px solid var(--line-2); background: var(--surface); color: var(--ink-2); font-size: 11.5px; font-weight: 600; cursor: pointer; font-family: inherit; }
   .edit-lock-bar .ell-btn:hover { border-color: var(--ink-3); }
   .expand-btn.locked { opacity: .4; cursor: not-allowed; pointer-events: none; }
@@ -8353,7 +8355,8 @@
               <svg class="ell-lock" viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
               <span class="ell-dot"></span>
               <div class="ell-avatar" id="sdLockAvatar">KM</div>
-              <div class="ell-text" id="sdLockText"><b>Kavita Menon</b> is editing this document. It's locked for everyone else until she saves.</div>
+              <div class="ell-text" id="sdLockText"><b>Kavita Menon</b> is currently editing this document. The edit session lasts 10 minutes — the lock releases automatically after that so others can edit.</div>
+              <span class="ell-timer" id="sdLockTimer">10:00 left</span>
               <button class="ell-btn" id="sdLockReleaseBtn">Simulate save &amp; release</button>
             </div>
             <div class="preview-box" id="sdPreviewBox">
@@ -14487,34 +14490,69 @@
     const releaseBtn = document.getElementById('sdLockReleaseBtn');
     const note       = document.getElementById('sdEditLockNote');
     let lockedByOther = false;
+    const timerEl = document.getElementById('sdLockTimer');
+    let countdownIv = null;
+
+    function fmtTime(s) { return Math.floor(s / 60) + ':' + String(s % 60).padStart(2, '0'); }
+    function stopCountdown() { if (countdownIv) { clearInterval(countdownIv); countdownIv = null; } }
+    function startCountdown(secs) {
+      stopCountdown();
+      if (!timerEl) return;
+      let remaining = secs;
+      timerEl.style.display = '';
+      timerEl.textContent = fmtTime(remaining) + ' left';
+      countdownIv = setInterval(() => {
+        remaining--;
+        if (remaining <= 0) {
+          stopCountdown();
+          timerEl.textContent = '0:00';
+          // 10-minute session expired → release the lock automatically
+          text.innerHTML = 'Edit session ended — the lock was released automatically. You can edit this document now.';
+          avatar.style.display = 'none';
+          releaseBtn.style.display = 'none';
+          if (editBtn) { editBtn.classList.remove('locked'); editBtn.title = 'Edit document'; }
+          lockedByOther = false;
+          setTimeout(release, 2500);
+          return;
+        }
+        timerEl.textContent = fmtTime(remaining) + ' left';
+      }, 1000);
+    }
 
     function lockByOther(name, init) {
       lockedByOther = true;
       lockBar.classList.remove('you');
       avatar.style.display = '';
       avatar.textContent = init;
-      text.innerHTML = '<b>' + name + '</b> is editing this document. It’s locked for everyone else until they save.';
+      text.innerHTML = '<b>' + name + '</b> is currently editing this document. The edit session lasts 10 minutes — the lock releases automatically after that so others can edit.';
       releaseBtn.style.display = '';
       releaseBtn.textContent = 'Simulate save & release';
       lockBar.classList.add('show');
       if (editBtn) { editBtn.classList.add('locked'); editBtn.title = 'Locked — ' + name + ' is editing'; }
+      startCountdown(600);
     }
     function youEditing() {
       if (lockedByOther) return;
+      stopCountdown();
+      if (timerEl) timerEl.style.display = 'none';
       lockBar.classList.add('you', 'show');
       avatar.style.display = 'none';
       text.innerHTML = 'You’re editing this document. Other users are locked out until you click Update.';
       releaseBtn.style.display = 'none';
     }
     function release() {
+      stopCountdown();
       lockedByOther = false;
       lockBar.classList.remove('show', 'you');
+      if (timerEl) timerEl.style.display = '';
       if (editBtn) { editBtn.classList.remove('locked'); editBtn.title = 'Edit document'; }
     }
     window.sdReleaseEditLock = release;
     window.sdLockByOther = lockByOther;
 
     releaseBtn.addEventListener('click', () => {
+      stopCountdown();
+      if (timerEl) timerEl.style.display = 'none';
       text.innerHTML = '<b>Kavita Menon</b> saved her changes — the document is now available to edit.';
       releaseBtn.style.display = 'none';
       avatar.style.display = 'none';
