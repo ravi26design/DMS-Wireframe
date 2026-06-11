@@ -1365,10 +1365,24 @@
   }
   .pd-collapse-handle:hover { background: var(--surface-2); }
   .pd-collapse-handle svg { width: 14px; height: 14px; stroke: var(--ink-2); stroke-width: 2; fill: none; transition: transform .15s; }
-  .detail-grid.details-collapsed { grid-template-columns: 1fr 1px; }
-  .detail-grid.details-collapsed .side-stack { align-self: stretch; background: var(--line); min-height: 320px; }
-  .detail-grid.details-collapsed .side-stack > *:not(.pd-collapse-handle) { display: none; }
+  .detail-grid.details-collapsed { grid-template-columns: 1fr 54px; }
+  .detail-grid.details-collapsed .side-stack {
+    align-self: stretch; min-height: 360px;
+    background: var(--surface); border: 1px solid var(--line);
+    border-radius: 16px; box-shadow: 0 10px 30px rgba(0,0,0,0.06);
+    display: flex; flex-direction: column; align-items: center; padding-top: 16px;
+  }
+  .detail-grid.details-collapsed .side-stack > *:not(.pd-collapse-handle):not(.pd-collapsed-label) { display: none; }
+  .detail-grid.details-collapsed .pd-collapse-handle { position: static; left: auto; top: auto; margin: 0 0 18px; box-shadow: none; }
   .detail-grid.details-collapsed .pd-collapse-handle svg { transform: rotate(180deg); }
+  /* Vertical "DOCUMENT DETAILS" label — collapsed state only */
+  .pd-collapsed-label { display: none; }
+  .detail-grid.details-collapsed .pd-collapsed-label {
+    display: block; writing-mode: vertical-rl;
+    font-size: 11px; font-weight: 700; letter-spacing: 0.22em;
+    text-transform: uppercase; color: var(--ink-3); white-space: nowrap;
+    cursor: pointer; user-select: none; margin: auto 0;
+  }
   .detail-head {
     display: flex;
     flex-direction: column;
@@ -5770,6 +5784,7 @@
         <!-- RIGHT · side stack -->
         <div class="side-stack">
           <button class="pd-collapse-handle" id="adPanelToggle" title="Collapse details"><svg viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg></button>
+          <div class="pd-collapsed-label" title="Expand details" onclick="this.parentNode.querySelector('.pd-collapse-handle').click()">Document Details</div>
           <div class="detail-card">
             <h3>Document Details</h3>
 
@@ -8440,6 +8455,7 @@
         <!-- RIGHT · side stack -->
         <div class="side-stack">
           <button class="pd-collapse-handle" id="sdPanelToggle" title="Collapse details"><svg viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg></button>
+          <div class="pd-collapsed-label" title="Expand details" onclick="this.parentNode.querySelector('.pd-collapse-handle').click()">Document Details</div>
           <div class="detail-card">
             <h3 style="display:flex;align-items:center;justify-content:space-between;gap:8px;">
               <span>Document Details</span>
@@ -9170,6 +9186,7 @@
         <!-- RIGHT -->
         <div class="side-stack">
           <button class="pd-collapse-handle" id="pdPanelToggle" title="Collapse details"><svg viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg></button>
+          <div class="pd-collapsed-label" title="Expand details" onclick="this.parentNode.querySelector('.pd-collapse-handle').click()">Document Details</div>
           <div class="detail-card">
             <h3 style="display:flex;align-items:center;justify-content:space-between;gap:8px;">
               <span>Document Details</span>
