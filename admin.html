@@ -1530,7 +1530,11 @@
   /* "being edited by another user" indicators */
   .editing-badge { display: inline-flex; align-items: center; gap: 5px; margin-left: 8px; padding: 2px 8px; border-radius: 999px; background: var(--surface-3); border: 1px solid var(--line); font-size: 10px; font-weight: 600; color: var(--ink-3); white-space: nowrap; vertical-align: middle; }
   .editing-badge .eb-dot, .dcv-editing .eb-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--ink-3); flex: none; animation: ellPulse 1.2s infinite; }
+  .editing-badge.editing-you { background: var(--ink); border-color: var(--ink); color: #fff; }
+  .editing-badge.editing-you .eb-dot { background: #fff; }
   .dcv-editing { display: flex; align-items: center; gap: 6px; margin-top: 8px; padding-top: 8px; border-top: 1px solid var(--line); font-size: 10.5px; font-weight: 600; color: var(--ink-3); }
+  .dcv-editing.dcv-editing-you { color: var(--ink); }
+  .dcv-editing.dcv-editing-you .eb-dot { background: var(--ink); }
   .expand-btn {
     width: 28px; height: 28px;
     border-radius: 6px;
@@ -7776,8 +7780,8 @@
                 </div>
               </div></div></td>
             </tr>
-            <tr data-owner="Priya Sharma">
-              <td><div class="cell-doc"><div class="doc-icon"><svg><use href="#i-doc"/></svg></div><div class="name">Annual Review Deck.pptx</div></div></td>
+            <tr data-owner="Priya Sharma" data-editing-you="true">
+              <td><div class="cell-doc"><div class="doc-icon"><svg><use href="#i-doc"/></svg></div><div class="name">Annual Review Deck.pptx</div><span class="editing-badge editing-you" title="You are editing this document"><span class="eb-dot"></span> You're editing</span></div></td>
               <td><div class="owner-cell owner-you"><div class="owner-avatar">PS</div> You</div></td>
               <td>2026-05-22</td>
               <td>4.8 MB</td>
@@ -12815,6 +12819,7 @@
           const date     = row.cells[2]?.textContent.trim() || '';
           const fileSize = row.cells[3]?.textContent.trim() || '';
           const lockedBy = row.dataset.lockedBy || '';
+          const editingYou = row.dataset.editingYou || '';
 
           const iconHref = isFolder ? '#i-folder' : '#i-doc';
           const badgeHtml = (!isFolder && ext) ? `<span class="file-ext ${badgeCls}" style="font-size:6px;">${badgeLbl}</span>` : '';
@@ -12840,7 +12845,8 @@
               <div class="dcv-avatar">${ownerAvatar && ownerAvatar !== '—' ? ownerAvatar : window.docInitials(ownerName)}</div>
               <div class="dcv-foot-text">${ownerName} · ${date}</div>
             </div>
-            ${lockedBy ? `<div class="dcv-editing"><span class="eb-dot"></span> ${lockedBy} is editing</div>` : ''}
+            ${lockedBy ? `<div class="dcv-editing"><span class="eb-dot"></span> ${lockedBy} is editing</div>`
+              : editingYou ? `<div class="dcv-editing dcv-editing-you"><span class="eb-dot"></span> You are editing</div>` : ''}
           </div>`;
         }).join('');
 
@@ -14526,10 +14532,11 @@
       lockBar.classList.remove('you');
       avatar.style.display = '';
       avatar.textContent = init;
-      text.innerHTML = '<b>' + name + '</b> is currently editing this document. The edit session lasts 10 minutes — the lock releases automatically after that so others can edit.';
+      text.innerHTML = '<b>' + name + '</b> is currently editing this document.';
+      stopCountdown();
+      if (timerEl) timerEl.style.display = 'none';
       lockBar.classList.add('show');
       if (editBtn) { editBtn.classList.add('locked'); editBtn.title = 'Locked — ' + name + ' is editing'; }
-      startCountdown(600);
     }
     function youEditing() {
       if (lockedByOther) return;
@@ -14547,6 +14554,7 @@
     }
     window.sdReleaseEditLock = release;
     window.sdLockByOther = lockByOther;
+    window.sdYouEditing = youEditing;
 
     // Demo trigger inside the share popover (Can edit)
     document.getElementById('sdSimEditorBtn')?.addEventListener('click', (e) => {
@@ -14573,6 +14581,9 @@
     // If this document is currently being edited by another user, show it locked
     if (row.dataset.lockedBy) {
       setTimeout(() => window.sdLockByOther?.(row.dataset.lockedBy, row.dataset.lockedInit || ''), 0);
+    } else if (row.dataset.editingYou) {
+      // This document is currently being edited by YOU → idle-session warning
+      setTimeout(() => window.sdYouEditing?.(), 0);
     }
 
     // Read from new table structure: Name | Owner | File Size | Date Modified | Actions
