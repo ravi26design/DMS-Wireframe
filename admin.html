@@ -14505,7 +14505,12 @@
           stopCountdown();
           timerEl.textContent = '0:00';
           // 10-minute session expired → release the lock automatically
-          text.innerHTML = 'Edit session ended — the lock was released automatically. You can edit this document now.';
+          if (lockBar.classList.contains('you')) {
+            // editor was idle → their session ends, document unlocks for others
+            text.innerHTML = 'Your edit session ended due to inactivity. The document is now unlocked for others to edit.';
+          } else {
+            text.innerHTML = 'Edit session ended — the lock was released automatically. You can edit this document now.';
+          }
           avatar.style.display = 'none';
           if (editBtn) { editBtn.classList.remove('locked'); editBtn.title = 'Edit document'; }
           lockedByOther = false;
@@ -14528,11 +14533,10 @@
     }
     function youEditing() {
       if (lockedByOther) return;
-      stopCountdown();
-      if (timerEl) timerEl.style.display = 'none';
       lockBar.classList.add('you', 'show');
       avatar.style.display = 'none';
-      text.innerHTML = 'You’re editing this document. Other users are locked out until you click Update.';
+      text.innerHTML = 'You’re editing this document. If you don’t make any changes, your edit session will end in 10 minutes and the document unlocks for others.';
+      startCountdown(600);
     }
     function release() {
       stopCountdown();
