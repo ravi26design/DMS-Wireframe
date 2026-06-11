@@ -8357,7 +8357,6 @@
               <div class="ell-avatar" id="sdLockAvatar">KM</div>
               <div class="ell-text" id="sdLockText"><b>Kavita Menon</b> is currently editing this document. The edit session lasts 10 minutes — the lock releases automatically after that so others can edit.</div>
               <span class="ell-timer" id="sdLockTimer">10:00 left</span>
-              <button class="ell-btn" id="sdLockReleaseBtn">Simulate save &amp; release</button>
             </div>
             <div class="preview-box" id="sdPreviewBox">
               <!-- Icon fallback (shown when no preview file) -->
@@ -14487,7 +14486,6 @@
     const editBtn    = document.getElementById('sdEditBtn');
     const avatar     = document.getElementById('sdLockAvatar');
     const text       = document.getElementById('sdLockText');
-    const releaseBtn = document.getElementById('sdLockReleaseBtn');
     const note       = document.getElementById('sdEditLockNote');
     let lockedByOther = false;
     const timerEl = document.getElementById('sdLockTimer');
@@ -14509,7 +14507,6 @@
           // 10-minute session expired → release the lock automatically
           text.innerHTML = 'Edit session ended — the lock was released automatically. You can edit this document now.';
           avatar.style.display = 'none';
-          releaseBtn.style.display = 'none';
           if (editBtn) { editBtn.classList.remove('locked'); editBtn.title = 'Edit document'; }
           lockedByOther = false;
           setTimeout(release, 2500);
@@ -14525,8 +14522,6 @@
       avatar.style.display = '';
       avatar.textContent = init;
       text.innerHTML = '<b>' + name + '</b> is currently editing this document. The edit session lasts 10 minutes — the lock releases automatically after that so others can edit.';
-      releaseBtn.style.display = '';
-      releaseBtn.textContent = 'Simulate save & release';
       lockBar.classList.add('show');
       if (editBtn) { editBtn.classList.add('locked'); editBtn.title = 'Locked — ' + name + ' is editing'; }
       startCountdown(600);
@@ -14538,7 +14533,6 @@
       lockBar.classList.add('you', 'show');
       avatar.style.display = 'none';
       text.innerHTML = 'You’re editing this document. Other users are locked out until you click Update.';
-      releaseBtn.style.display = 'none';
     }
     function release() {
       stopCountdown();
@@ -14549,17 +14543,6 @@
     }
     window.sdReleaseEditLock = release;
     window.sdLockByOther = lockByOther;
-
-    releaseBtn.addEventListener('click', () => {
-      stopCountdown();
-      if (timerEl) timerEl.style.display = 'none';
-      text.innerHTML = '<b>Kavita Menon</b> saved her changes — the document is now available to edit.';
-      releaseBtn.style.display = 'none';
-      avatar.style.display = 'none';
-      if (editBtn) { editBtn.classList.remove('locked'); editBtn.title = 'Edit document'; }
-      lockedByOther = false;
-      setTimeout(release, 2200);
-    });
 
     // Demo trigger inside the share popover (Can edit)
     document.getElementById('sdSimEditorBtn')?.addEventListener('click', (e) => {
