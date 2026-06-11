@@ -1401,14 +1401,11 @@
   /* Vertical "DOCUMENT DETAILS" label — collapsed state only */
   .pd-collapsed-label { display: none; }
   .detail-grid.details-collapsed .pd-collapsed-label {
-    display: flex; flex: 1 1 auto; min-height: 0;
-    align-items: center; justify-content: center;
-    cursor: pointer; user-select: none;
-  }
-  .detail-grid.details-collapsed .pd-collapsed-label span {
+    display: block; margin-top: 14px;
     writing-mode: vertical-rl; transform: rotate(180deg);
     font-size: 11px; font-weight: 700; letter-spacing: 0.22em;
     text-transform: uppercase; color: var(--ink-2); white-space: nowrap;
+    cursor: pointer; user-select: none;
   }
   .detail-head {
     display: flex;
