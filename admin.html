@@ -9446,6 +9446,11 @@
 
       <!-- TAGS -->
       <div data-tcpanel="tags" class="hidden">
+        <div class="tabs with-counts" id="tagSubTabs" style="margin-bottom:16px;">
+          <div class="tab active" data-tagtab="system">System Defined Tags</div>
+          <div class="tab" data-tagtab="user">User Defined Tags</div>
+        </div>
+        <div data-tagpanel="system">
         <div class="card" style="overflow-x:auto;">
           <table class="tbl" style="width:100%;">
             <thead><tr>
@@ -9466,6 +9471,30 @@
               <tr><td><span class="pill ink">Gram Sabha</span></td><td><span class="pill">Governance</span></td><td>Administration</td><td><div class="owner-cell" style="gap:8px;"><div class="owner-avatar" style="width:28px;height:28px;font-size:10px;">VA</div> Vikram Anand</div></td><td>15 Mar 2026</td><td><div style="display:flex;gap:6px;justify-content:flex-end;"><button class="icon-btn tc-edit" title="Edit"><svg><use href="#i-edit"/></svg></button><button class="icon-btn tc-del" title="Delete"><svg><use href="#i-trash"/></svg></button></div></td></tr>
             </tbody>
           </table>
+        </div>
+        </div><!-- /tagpanel:system -->
+
+        <div data-tagpanel="user" class="hidden">
+          <div class="card" style="overflow-x:auto;">
+            <table class="tbl" style="width:100%;">
+              <thead><tr>
+                <th>Tag</th>
+                <th>Theme</th>
+                <th>Department</th>
+                <th>Created By</th>
+                <th>Created Date</th>
+                <th style="text-align:right;">Actions</th>
+              </tr></thead>
+              <tbody>
+                <tr><td><span class="pill ink">Drought Relief</span></td><td><span class="pill">Agriculture</span></td><td>Field Ops</td><td><div class="owner-cell" style="gap:8px;"><div class="owner-avatar" style="width:28px;height:28px;font-size:10px;">PS</div> Priya Sharma</div></td><td>03 Apr 2026</td><td><div style="display:flex;gap:6px;justify-content:flex-end;"><button class="icon-btn tc-edit" title="Edit"><svg><use href="#i-edit"/></svg></button><button class="icon-btn tc-del" title="Delete"><svg><use href="#i-trash"/></svg></button></div></td></tr>
+                <tr><td><span class="pill ink">Soil Health</span></td><td><span class="pill">NRM</span></td><td>Operations</td><td><div class="owner-cell" style="gap:8px;"><div class="owner-avatar" style="width:28px;height:28px;font-size:10px;">KM</div> Kavita Menon</div></td><td>07 Apr 2026</td><td><div style="display:flex;gap:6px;justify-content:flex-end;"><button class="icon-btn tc-edit" title="Edit"><svg><use href="#i-edit"/></svg></button><button class="icon-btn tc-del" title="Delete"><svg><use href="#i-trash"/></svg></button></div></td></tr>
+                <tr><td><span class="pill ink">Women SHG</span></td><td><span class="pill">Livelihood</span></td><td>Field Ops</td><td><div class="owner-cell" style="gap:8px;"><div class="owner-avatar" style="width:28px;height:28px;font-size:10px;">SJ</div> Sarah Johnson</div></td><td>12 Apr 2026</td><td><div style="display:flex;gap:6px;justify-content:flex-end;"><button class="icon-btn tc-edit" title="Edit"><svg><use href="#i-edit"/></svg></button><button class="icon-btn tc-del" title="Delete"><svg><use href="#i-trash"/></svg></button></div></td></tr>
+                <tr><td><span class="pill ink">Rainfall Data</span></td><td><span class="pill">Water</span></td><td>Operations</td><td><div class="owner-cell" style="gap:8px;"><div class="owner-avatar" style="width:28px;height:28px;font-size:10px;">MC</div> Michael Chen</div></td><td>18 Apr 2026</td><td><div style="display:flex;gap:6px;justify-content:flex-end;"><button class="icon-btn tc-edit" title="Edit"><svg><use href="#i-edit"/></svg></button><button class="icon-btn tc-del" title="Delete"><svg><use href="#i-trash"/></svg></button></div></td></tr>
+                <tr><td><span class="pill ink">Village Map</span></td><td><span class="pill">Land Rights</span></td><td>Field Ops</td><td><div class="owner-cell" style="gap:8px;"><div class="owner-avatar" style="width:28px;height:28px;font-size:10px;">RN</div> Rajesh Nair</div></td><td>22 Apr 2026</td><td><div style="display:flex;gap:6px;justify-content:flex-end;"><button class="icon-btn tc-edit" title="Edit"><svg><use href="#i-edit"/></svg></button><button class="icon-btn tc-del" title="Delete"><svg><use href="#i-trash"/></svg></button></div></td></tr>
+                <tr><td><span class="pill ink">Tree Census</span></td><td><span class="pill">Forest</span></td><td>Operations</td><td><div class="owner-cell" style="gap:8px;"><div class="owner-avatar" style="width:28px;height:28px;font-size:10px;">ED</div> Emma Davis</div></td><td>28 Apr 2026</td><td><div style="display:flex;gap:6px;justify-content:flex-end;"><button class="icon-btn tc-edit" title="Edit"><svg><use href="#i-edit"/></svg></button><button class="icon-btn tc-del" title="Delete"><svg><use href="#i-trash"/></svg></button></div></td></tr>
+              </tbody>
+            </table>
+          </div>
         </div>
       </div>
 
@@ -13517,9 +13546,21 @@
       tr.innerHTML = '<td><span class="pill ink">' + name + '</span></td>' +
         '<td><span class="pill">' + theme.textContent + '</span></td>' +
         '<td>' + dept.textContent + '</td>' + ownerCell(u) + '<td>' + today() + '</td>' + TC_ACTIONS;
-      document.querySelector('[data-tcpanel="tags"] tbody').appendChild(tr);
+      (document.querySelector('[data-tcpanel="tags"] [data-tagpanel]:not(.hidden) tbody')
+        || document.querySelector('[data-tcpanel="tags"] tbody')).appendChild(tr);
       window.closeAddTagModal();
       window.showToast?.('Tag "' + name + '" added');
+    });
+
+    // Tags sub-tabs: System Defined / User Defined
+    const tagSubTabs = document.getElementById('tagSubTabs');
+    tagSubTabs?.querySelectorAll('.tab').forEach(tab => {
+      tab.addEventListener('click', () => {
+        tagSubTabs.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+        tab.classList.add('active');
+        const key = tab.dataset.tagtab;
+        document.querySelectorAll('[data-tagpanel]').forEach(p => p.classList.toggle('hidden', p.dataset.tagpanel !== key));
+      });
     });
 
     // open buttons
