@@ -7642,16 +7642,6 @@
         <div class="filter-panel adv-search-panel" id="subAdvSearchPanel">
           <div class="filter-grid" style="grid-template-columns: repeat(3, 1fr); align-items: start;">
 
-            <!-- Tags — full width chip input with suggestions -->
-            <div class="filter-field" style="grid-column: 1 / -1; position: relative;">
-              <div class="filter-label">Tags</div>
-              <div class="tag-input-wrap" id="subSrTagWrap" style="background-image:none;">
-                <svg class="tw-icon"><use href="#i-tag"/></svg>
-                <input type="text" id="subSrTagInput" placeholder="Type a tag and press Enter to add…" autocomplete="off"/>
-              </div>
-              <div class="tag-suggestions" id="subSrTagSugg"></div>
-            </div>
-
             <!-- Search In (Active / Archive / Trash documents) -->
             <div class="filter-field" style="grid-column: 1 / -1;">
               <div class="filter-label">Search in the Active, Archive, Trash documents</div>
@@ -7666,6 +7656,16 @@
                   <span class="toggle" id="subSrTrashToggle" style="display:inline-block;flex:none;border:1.5px solid var(--ink-3);"></span> Trash
                 </span>
               </div>
+            </div>
+
+            <!-- Tags — full width chip input with suggestions -->
+            <div class="filter-field" style="grid-column: 1 / -1; position: relative;">
+              <div class="filter-label">Tags</div>
+              <div class="tag-input-wrap" id="subSrTagWrap" style="background-image:none;">
+                <svg class="tw-icon"><use href="#i-tag"/></svg>
+                <input type="text" id="subSrTagInput" placeholder="Type a tag and press Enter to add…" autocomplete="off"/>
+              </div>
+              <div class="tag-suggestions" id="subSrTagSugg"></div>
             </div>
 
             <!-- Theme -->
