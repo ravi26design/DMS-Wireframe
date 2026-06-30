@@ -8379,6 +8379,26 @@
                 </div>
               </div>
               <div class="sp-divider"></div>
+              <div class="sp-section" id="sdInviteSection">
+                <div class="sp-label">Invite people</div>
+                <div style="position:relative;margin-top:8px;">
+                  <input type="text" id="sdInviteInput" placeholder="Search people or enter email…" autocomplete="off" style="width:100%;box-sizing:border-box;padding:9px 11px;border:1px solid var(--line-2);border-radius:8px;font-size:12.5px;font-family:inherit;color:var(--ink);outline:none;background:var(--surface);" />
+                  <div id="sdInviteSugg" style="display:none;position:absolute;top:calc(100% + 4px);left:0;right:0;background:var(--surface);border:1px solid var(--line);border-radius:8px;box-shadow:0 8px 24px rgba(0,0,0,.12);z-index:60;max-height:184px;overflow-y:auto;padding:4px;"></div>
+                </div>
+                <div style="display:flex;gap:8px;margin-top:8px;align-items:stretch;">
+                  <div class="select-control" id="sdInviteAccess" style="flex:1;padding-top:0;padding-bottom:0;">
+                    <span class="select-value" style="font-size:12px;">Can view</span>
+                    <svg><use href="#i-chevron"/></svg>
+                    <div class="select-menu">
+                      <div class="select-option selected">Can view</div>
+                      <div class="select-option">Can edit</div>
+                    </div>
+                  </div>
+                  <button class="btn primary" id="sdInviteBtn" style="padding:0 16px;font-size:12px;">Invite</button>
+                </div>
+                <div id="sdInvitedList" style="margin-top:10px;display:flex;flex-direction:column;gap:7px;"></div>
+              </div>
+              <div class="sp-divider"></div>
               <div class="sp-section">
                 <div class="sp-label">Share via</div>
                 <div class="sp-social-row">
@@ -14946,6 +14966,10 @@
     const _sw = document.querySelector('#sdTopActions .share-wrap'); if (_sw) _sw.style.display = '';
     const _rb = document.getElementById('sdRestoreBtn'); if (_rb) _rb.style.display = 'none';
     const _dl = document.getElementById('sdDownloadBtn'); if (_dl) _dl.style.display = '';
+    // Invite people — only when the user can edit this document; reset per document
+    const _inv = document.getElementById('sdInviteSection'); if (_inv) _inv.style.display = canModify ? '' : 'none';
+    const _invList = document.getElementById('sdInvitedList'); if (_invList) _invList.innerHTML = '';
+    const _invInput = document.getElementById('sdInviteInput'); if (_invInput) _invInput.value = '';
 
     // Seed version history panel
     const vPanel = document.getElementById('sdVersionPanel');
@@ -17525,6 +17549,71 @@
     document.addEventListener('click', () => {
       document.querySelectorAll('.share-popover.open').forEach(p => p.classList.remove('open'));
     });
+
+    // ----- Invite people (Documents share popover) -----
+    (function () {
+      const input = document.getElementById('sdInviteInput');
+      const sugg  = document.getElementById('sdInviteSugg');
+      const list  = document.getElementById('sdInvitedList');
+      const btn   = document.getElementById('sdInviteBtn');
+      const access= document.getElementById('sdInviteAccess');
+      if (!input || !btn) return;
+      const PEOPLE = [
+        { name: 'Priya Sharma',  email: 'priya@fes.org.in',  init: 'PS' },
+        { name: 'Kavita Menon',  email: 'kavita@fes.org.in', init: 'KM' },
+        { name: 'Rajesh Nair',   email: 'rajesh@fes.org.in', init: 'RN' },
+        { name: 'Sarah Johnson', email: 'sarah@fes.org.in',  init: 'SJ' },
+        { name: 'Michael Chen',  email: 'michael@fes.org.in',init: 'MC' },
+        { name: 'Emma Davis',    email: 'emma@fes.org.in',   init: 'ED' },
+        { name: 'Robert Wilson', email: 'robert@fes.org.in', init: 'RW' },
+        { name: 'Lisa Park',     email: 'lisa@fes.org.in',   init: 'LP' }
+      ];
+      let chosen = null;
+      const avatar = (init) => '<span style="width:26px;height:26px;border-radius:50%;background:var(--ink);color:#fff;font-size:9px;font-weight:700;display:grid;place-items:center;flex:none;">' + init + '</span>';
+
+      function renderSugg(q) {
+        const query = (q || '').trim().toLowerCase();
+        if (!query) { sugg.style.display = 'none'; return; }
+        const m = PEOPLE.filter(p => p.name.toLowerCase().includes(query) || p.email.toLowerCase().includes(query));
+        if (!m.length) { sugg.style.display = 'none'; return; }
+        sugg.innerHTML = m.map(p =>
+          '<div class="sp-person" data-name="' + p.name + '" data-email="' + p.email + '" data-init="' + p.init + '" style="display:flex;align-items:center;gap:9px;padding:7px 9px;border-radius:6px;cursor:pointer;">' +
+            avatar(p.init) +
+            '<span style="min-width:0;"><span style="display:block;font-size:12.5px;font-weight:600;color:var(--ink);">' + p.name + '</span><span style="display:block;font-size:11px;color:var(--ink-3);">' + p.email + '</span></span>' +
+          '</div>').join('');
+        sugg.style.display = 'block';
+        sugg.querySelectorAll('.sp-person').forEach(el => {
+          el.addEventListener('mouseenter', () => el.style.background = 'var(--surface-3)');
+          el.addEventListener('mouseleave', () => el.style.background = '');
+          el.addEventListener('click', () => {
+            chosen = { name: el.dataset.name, email: el.dataset.email, init: el.dataset.init };
+            input.value = el.dataset.name; sugg.style.display = 'none';
+          });
+        });
+      }
+      input.addEventListener('input', () => { chosen = null; renderSugg(input.value); });
+      input.addEventListener('focus', () => renderSugg(input.value));
+      document.addEventListener('click', (e) => {
+        if (!e.target.closest('#sdInviteInput') && !e.target.closest('#sdInviteSugg')) sugg.style.display = 'none';
+      });
+
+      btn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const val = input.value.trim();
+        if (!val) { window.showToast?.('Search a person or enter an email'); return; }
+        const acc = access?.querySelector('.select-option.selected')?.textContent.trim() || 'Can view';
+        const person = chosen || { name: val, email: val, init: (val[0] || '?').toUpperCase() };
+        const row = document.createElement('div');
+        row.style.cssText = 'display:flex;align-items:center;gap:9px;';
+        row.innerHTML = avatar(person.init) +
+          '<span style="flex:1;min-width:0;"><span style="display:block;font-size:12px;font-weight:600;color:var(--ink);overflow:hidden;text-overflow:ellipsis;">' + person.name + '</span><span style="display:block;font-size:11px;color:var(--ink-3);">' + acc + '</span></span>' +
+          '<button class="sp-invite-remove" title="Remove" style="border:none;background:none;cursor:pointer;color:var(--ink-3);font-size:14px;line-height:1;flex:none;">✕</button>';
+        row.querySelector('.sp-invite-remove').addEventListener('click', () => row.remove());
+        list.appendChild(row);
+        input.value = ''; chosen = null; sugg.style.display = 'none';
+        window.showToast?.('Invited ' + person.name + ' · ' + acc);
+      });
+    })();
   })();
 
   /* ===== Social share · Connect → Post to feed ===== */
