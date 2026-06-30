@@ -9435,12 +9435,14 @@
           <div class="tab active" data-tctab="themes">Themes</div>
           <div class="tab" data-tctab="categories">Categories</div>
           <div class="tab" data-tctab="tags">Tags</div>
+          <div class="tab" data-tctab="types">Types</div>
           <div class="tab" data-tctab="archive">Archive</div>
         </div>
         <div>
           <button class="btn primary" id="tcAddThemeBtn">+ Add Theme</button>
           <button class="btn primary" id="tcAddCatBtn" style="display:none;">+ Add Category</button>
           <button class="btn primary" id="tcAddTagBtn" style="display:none;">+ Add Tag</button>
+          <button class="btn primary" id="tcAddTypeBtn" style="display:none;">+ Add Type</button>
         </div>
       </div>
 
@@ -9540,6 +9542,32 @@
               </tbody>
             </table>
           </div>
+        </div>
+      </div>
+
+      <!-- TYPES -->
+      <div data-tcpanel="types" class="hidden">
+        <div class="card" style="overflow-x:auto;">
+          <table class="tbl" style="width:100%;">
+            <thead><tr>
+              <th>Type</th>
+              <th>Created By</th>
+              <th>Created Date</th>
+              <th style="text-align:right;">Actions</th>
+            </tr></thead>
+            <tbody>
+              <tr><td class="bold">Personal Document</td><td><div class="owner-cell" style="gap:8px;"><div class="owner-avatar" style="width:28px;height:28px;font-size:10px;">VA</div> Vikram Anand</div></td><td>12 Jan 2026</td><td><div style="display:flex;gap:6px;justify-content:flex-end;"><button class="icon-btn tc-del" title="Delete"><svg><use href="#i-trash"/></svg></button></div></td></tr>
+              <tr><td class="bold">Legal Document</td><td><div class="owner-cell" style="gap:8px;"><div class="owner-avatar" style="width:28px;height:28px;font-size:10px;">VA</div> Vikram Anand</div></td><td>12 Jan 2026</td><td><div style="display:flex;gap:6px;justify-content:flex-end;"><button class="icon-btn tc-del" title="Delete"><svg><use href="#i-trash"/></svg></button></div></td></tr>
+              <tr><td class="bold">Financial Document</td><td><div class="owner-cell" style="gap:8px;"><div class="owner-avatar" style="width:28px;height:28px;font-size:10px;">NK</div> Neha Kapoor</div></td><td>18 Jan 2026</td><td><div style="display:flex;gap:6px;justify-content:flex-end;"><button class="icon-btn tc-del" title="Delete"><svg><use href="#i-trash"/></svg></button></div></td></tr>
+              <tr><td class="bold">HR Document</td><td><div class="owner-cell" style="gap:8px;"><div class="owner-avatar" style="width:28px;height:28px;font-size:10px;">NK</div> Neha Kapoor</div></td><td>02 Feb 2026</td><td><div style="display:flex;gap:6px;justify-content:flex-end;"><button class="icon-btn tc-del" title="Delete"><svg><use href="#i-trash"/></svg></button></div></td></tr>
+              <tr><td class="bold">Technical Document</td><td><div class="owner-cell" style="gap:8px;"><div class="owner-avatar" style="width:28px;height:28px;font-size:10px;">VA</div> Vikram Anand</div></td><td>21 Feb 2026</td><td><div style="display:flex;gap:6px;justify-content:flex-end;"><button class="icon-btn tc-del" title="Delete"><svg><use href="#i-trash"/></svg></button></div></td></tr>
+              <tr><td class="bold">Project Document</td><td><div class="owner-cell" style="gap:8px;"><div class="owner-avatar" style="width:28px;height:28px;font-size:10px;">NK</div> Neha Kapoor</div></td><td>09 Mar 2026</td><td><div style="display:flex;gap:6px;justify-content:flex-end;"><button class="icon-btn tc-del" title="Delete"><svg><use href="#i-trash"/></svg></button></div></td></tr>
+              <tr><td class="bold">Compliance Document</td><td><div class="owner-cell" style="gap:8px;"><div class="owner-avatar" style="width:28px;height:28px;font-size:10px;">VA</div> Vikram Anand</div></td><td>15 Mar 2026</td><td><div style="display:flex;gap:6px;justify-content:flex-end;"><button class="icon-btn tc-del" title="Delete"><svg><use href="#i-trash"/></svg></button></div></td></tr>
+              <tr><td class="bold">Policy Document</td><td><div class="owner-cell" style="gap:8px;"><div class="owner-avatar" style="width:28px;height:28px;font-size:10px;">NK</div> Neha Kapoor</div></td><td>28 Mar 2026</td><td><div style="display:flex;gap:6px;justify-content:flex-end;"><button class="icon-btn tc-del" title="Delete"><svg><use href="#i-trash"/></svg></button></div></td></tr>
+              <tr><td class="bold">Training Material</td><td><div class="owner-cell" style="gap:8px;"><div class="owner-avatar" style="width:28px;height:28px;font-size:10px;">VA</div> Vikram Anand</div></td><td>03 Apr 2026</td><td><div style="display:flex;gap:6px;justify-content:flex-end;"><button class="icon-btn tc-del" title="Delete"><svg><use href="#i-trash"/></svg></button></div></td></tr>
+              <tr><td class="bold">Marketing Material</td><td><div class="owner-cell" style="gap:8px;"><div class="owner-avatar" style="width:28px;height:28px;font-size:10px;">NK</div> Neha Kapoor</div></td><td>07 Apr 2026</td><td><div style="display:flex;gap:6px;justify-content:flex-end;"><button class="icon-btn tc-del" title="Delete"><svg><use href="#i-trash"/></svg></button></div></td></tr>
+            </tbody>
+          </table>
         </div>
       </div>
 
@@ -10091,6 +10119,31 @@
     <div class="modal-actions">
       <button class="btn" onclick="window.closeAddTagModal()">Cancel</button>
       <button class="btn primary" id="addTagSave">+ Add Tag</button>
+    </div>
+  </div>
+</div>
+
+<!-- ============================ MODAL · ADD TYPE ============================ -->
+<div class="modal-backdrop" id="addTypeModal">
+  <div class="modal" style="max-width:480px;">
+    <div class="modal-head">
+      <div>
+        <h2>Add Type</h2>
+        <p>Create a new document type</p>
+      </div>
+      <div class="modal-close" onclick="window.closeAddTypeModal()">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </div>
+    </div>
+    <div class="form-grid" style="padding-left:24px;padding-right:24px;">
+      <div class="field full">
+        <label>Type Name</label>
+        <div class="control"><input type="text" id="addTypeName" placeholder="Enter type name" /></div>
+      </div>
+    </div>
+    <div class="modal-actions">
+      <button class="btn" onclick="window.closeAddTypeModal()">Cancel</button>
+      <button class="btn primary" id="addTypeSave">+ Add Type</button>
     </div>
   </div>
 </div>
@@ -13471,6 +13524,7 @@
     const addThemeBtn = document.getElementById('tcAddThemeBtn');
     const addCatBtn   = document.getElementById('tcAddCatBtn');
     const addTagBtn   = document.getElementById('tcAddTagBtn');
+    const addTypeBtn  = document.getElementById('tcAddTypeBtn');
     tabs.querySelectorAll('.tab').forEach(tab => {
       tab.addEventListener('click', () => {
         tabs.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
@@ -13480,6 +13534,7 @@
         if (addThemeBtn) addThemeBtn.style.display = key === 'themes' ? '' : 'none';
         if (addCatBtn)   addCatBtn.style.display   = key === 'categories' ? '' : 'none';
         if (addTagBtn)   addTagBtn.style.display   = key === 'tags' ? '' : 'none';
+        if (addTypeBtn)  addTypeBtn.style.display  = key === 'types' ? '' : 'none';
       });
     });
     // ----- helpers for new rows -----
@@ -13605,6 +13660,27 @@
       window.showToast?.('Tag "' + name + '" added');
     });
 
+    // ----- Type modal (Add) -----
+    const typeModal = document.getElementById('addTypeModal');
+    window.openAddTypeModal  = function () {
+      document.getElementById('addTypeName').value = '';
+      typeModal.classList.add('show'); document.body.style.overflow = 'hidden';
+    };
+    window.closeAddTypeModal = function () { typeModal.classList.remove('show'); document.body.style.overflow = ''; };
+    typeModal?.addEventListener('click', e => { if (e.target === typeModal) window.closeAddTypeModal(); });
+    document.getElementById('addTypeSave')?.addEventListener('click', () => {
+      const name = (document.getElementById('addTypeName').value || '').trim();
+      if (!name) { window.showToast?.('Enter a type name'); return; }
+      const u = curUser();
+      const tr = document.createElement('tr');
+      tr.innerHTML = '<td class="bold">' + name + '</td>' +
+        ownerCell(u) + '<td>' + today() +
+        '</td><td><div style="display:flex;gap:6px;justify-content:flex-end;"><button class="icon-btn tc-del" title="Delete"><svg><use href="#i-trash"/></svg></button></div></td>';
+      document.querySelector('[data-tcpanel="types"] tbody')?.appendChild(tr);
+      window.closeAddTypeModal();
+      window.showToast?.('Type "' + name + '" added');
+    });
+
     // Tags sub-tabs: System Defined / User Defined
     const tagSubTabs = document.getElementById('tagSubTabs');
     tagSubTabs?.querySelectorAll('.tab').forEach(tab => {
@@ -13620,6 +13696,7 @@
     addThemeBtn?.addEventListener('click', () => window.openAddThemeModal());
     addCatBtn?.addEventListener('click', () => window.openAddCategoryModal());
     addTagBtn?.addEventListener('click', () => window.openAddTagModal());
+    addTypeBtn?.addEventListener('click', () => window.openAddTypeModal());
 
     // edit / delete (delegated → works for newly added rows too)
     document.querySelector('[data-page="themescat"]')?.addEventListener('click', e => {
