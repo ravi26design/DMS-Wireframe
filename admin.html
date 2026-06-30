@@ -117,6 +117,13 @@
     flex-direction: column;
     gap: 4px;
   }
+  .nav-bottom { margin-top: auto; display: flex; flex-direction: column; gap: 4px; }
+  .nav-section-label {
+    font-size: 10px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase;
+    color: var(--ink-4); padding: 10px 14px 4px; margin-top: 8px; border-top: 1px solid var(--line);
+  }
+  .app.nav-collapsed .nav-section-label { display: none; }
+  .app.nav-collapsed .nav-bottom { margin-top: auto; }
   .nav-item {
     display: flex;
     align-items: center;
@@ -4631,9 +4638,14 @@
       <div class="nav-item" data-target="search" data-roles="admin"><svg><use href="#i-search"/></svg> Advanced Search</div>
       <div class="nav-item" data-target="roles" data-roles="admin"><svg><use href="#i-roles"/></svg> Roles &amp; Permissions</div>
       <div class="nav-item" data-target="audit" data-roles="admin" style="display:none;"><svg><use href="#i-audit"/></svg> Audit Logs</div>
-      <div class="nav-item" data-target="archive" data-roles="admin user superadmin platmod orgadmin orgmod"><svg><use href="#i-archive"/></svg> Archive</div>
-      <div class="nav-item" data-target="deleted" data-roles="user superadmin platmod orgadmin"><svg><use href="#i-trash"/></svg> Trash</div>
       <div class="nav-item" data-target="settings" data-roles="admin" style="display:none;"><svg><use href="#i-settings"/></svg> Settings</div>
+
+      <!-- Archive & Trash — pinned to the bottom -->
+      <div class="nav-bottom">
+        <div class="nav-section-label">Storage</div>
+        <div class="nav-item" data-target="archive" data-roles="admin user superadmin platmod orgadmin orgmod"><svg><use href="#i-archive"/></svg> Archive</div>
+        <div class="nav-item" data-target="deleted" data-roles="user superadmin platmod orgadmin"><svg><use href="#i-trash"/></svg> Trash</div>
+      </div>
     </nav>
 
     <!-- Pinned Documents -->
