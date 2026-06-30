@@ -8374,6 +8374,7 @@
               </div>
             </div>
           </div>
+          <button class="icon-btn" id="sdRestoreBtn" title="Restore" style="display:none;"><svg><use href="#i-restore"/></svg></button>
           <button class="icon-btn" id="sdDownloadBtn" title="Download"><svg><use href="#i-download"/></svg></button>
           <button class="icon-btn" id="sdReuploadBtn" title="Re-upload new version" style="display:none;"><svg><use href="#i-reupload"/></svg></button>
           <button class="icon-btn" id="sdDeleteBtn" title="Delete" style="display:none; color:#DC2626; border-color:#DC2626;"><svg><use href="#i-trash"/></svg></button>
@@ -11599,6 +11600,13 @@
       if (e.target.closest('.cell-actions')) return;
       window.openArchivedDocDetail?.(row, arcRow ? 'archive' : 'deleted');
     });
+    // Restore from the detail view → toast + go back to Archive/Trash
+    document.getElementById('sdRestoreBtn')?.addEventListener('click', () => {
+      const btn = document.getElementById('sdRestoreBtn');
+      const docName = btn?.dataset.doc || 'Document';
+      window.showToast?.('"' + docName + '" restored');
+      document.getElementById('backToSubmission')?.click();
+    });
   })();
 
   /* ===== Change Password modal ===== */
@@ -14785,6 +14793,9 @@
     // Edit Document Details pencil — only if can modify
     const sdEditDetailsBtn = document.getElementById('sdEditDetailsBtn');
     if (sdEditDetailsBtn) sdEditDetailsBtn.style.display = canModify ? '' : 'none';
+    // Reset Archive/Trash-only controls for the normal Documents flow
+    const _sw = document.querySelector('#sdTopActions .share-wrap'); if (_sw) _sw.style.display = '';
+    const _rb = document.getElementById('sdRestoreBtn'); if (_rb) _rb.style.display = 'none';
 
     // Seed version history panel
     const vPanel = document.getElementById('sdVersionPanel');
@@ -14835,9 +14846,14 @@
     const br = document.getElementById('sdBrFile'); if (br) br.textContent = name;
     document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
     document.querySelector('.nav-item[data-target="' + sourcePage + '"]')?.classList.add('active');
+    // Archive/Trash actions only → Restore + Download; hide doc-module actions
     ['sdEditBtn','sdReuploadBtn','sdDeleteBtn','sdEditDetailsBtn'].forEach(id => {
       const el = document.getElementById(id); if (el) el.style.display = 'none';
     });
+    const sw = document.querySelector('#sdTopActions .share-wrap'); if (sw) sw.style.display = 'none';
+    const dl = document.getElementById('sdDownloadBtn'); if (dl) dl.style.display = '';
+    const rb = document.getElementById('sdRestoreBtn');
+    if (rb) { rb.style.display = ''; rb.dataset.src = sourcePage; rb.dataset.doc = name; }
   };
 
   // Submission table clicks — folder rows handled by folder-nav IIFE below
