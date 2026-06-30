@@ -13065,6 +13065,9 @@
       listBtn.addEventListener('click', switchToList);
       gridBtn.addEventListener('click', switchToGrid);
 
+      // Rebuild the grid (e.g. after a search) when grid view is active
+      window.subRebuildGrid = function () { if (gridCont && gridCont.classList.contains('visible')) buildSubGrid(); };
+
       // Default to grid view — deferred so the grid-card helpers (defined later) exist
       setTimeout(switchToGrid, 0);
     })();
@@ -13281,6 +13284,7 @@
       if (pager) pager.innerHTML = `Showing <b>${visible === 0 ? 0 : '1–' + visible}</b> of <b>${visible}</b> items`;
 
       renderAdvSearchChips();
+      window.subRebuildGrid?.(); // refresh grid cards (incl. Archive/Trash badges) if in grid view
     }
 
     function resetAdvDropdown(dd) {
@@ -13365,6 +13369,7 @@
       document.getElementById('submissionTable')?.querySelectorAll('tbody tr.adv-extra-row').forEach(r => r.remove());
       // Restore all rows
       document.getElementById('submissionTable')?.querySelectorAll('tbody tr').forEach(r => r.style.display = '');
+      window.subRebuildGrid?.();
       const subEmpty = document.getElementById('subEmpty');
       if (subEmpty) subEmpty.classList.remove('show');
       const pager = document.querySelector('[data-page="submission"] .pager .info');
