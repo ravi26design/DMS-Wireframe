@@ -12995,6 +12995,10 @@
           const fileSize = row.cells[3]?.textContent.trim() || '';
           const lockedBy = row.dataset.lockedBy || '';
           const editingYou = row.dataset.editingYou || '';
+          const src = row.dataset.src || '';
+          const srcBadge = src
+            ? `<div style="margin-top:8px;"><span class="src-badge ${src === 'deleted' ? 'src-trash' : 'src-archive'}" style="margin-left:0;">${src === 'deleted' ? 'Trash' : 'Archive'}</span></div>`
+            : '';
 
           const iconHref = isFolder ? '#i-folder' : '#i-doc';
           const badgeHtml = (!isFolder && ext) ? `<span class="file-ext ${badgeCls}" style="font-size:6px;">${badgeLbl}</span>` : '';
@@ -13022,6 +13026,7 @@
             </div>
             ${lockedBy ? `<div class="dcv-editing"><span class="eb-dot"></span> ${lockedBy} is editing</div>`
               : editingYou ? `<div class="dcv-editing dcv-editing-you"><span class="eb-dot"></span> You are editing</div>` : ''}
+            ${srcBadge}
           </div>`;
         }).join('');
 
