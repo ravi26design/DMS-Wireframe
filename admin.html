@@ -7652,18 +7652,16 @@
               <div class="tag-suggestions" id="subSrTagSugg"></div>
             </div>
 
-            <!-- Search In (scope: include Archive / Trash) -->
+            <!-- Search In (include Archive / Trash) -->
             <div class="filter-field">
               <div class="filter-label">Search In</div>
-              <div class="select-control" data-dropdown="subsr-scope">
-                <span class="select-value">All Locations</span>
-                <svg><use href="#i-chevron"/></svg>
-                <div class="select-menu">
-                  <div class="select-option selected">All Locations</div>
-                  <div class="select-option">Documents</div>
-                  <div class="select-option">Archive</div>
-                  <div class="select-option">Trash</div>
-                </div>
+              <div style="display:flex;align-items:center;gap:22px;padding-top:9px;">
+                <span style="display:inline-flex;align-items:center;gap:8px;font-size:13px;color:var(--ink-2);cursor:pointer;" onclick="if(!event.target.closest('.toggle')) this.querySelector('.toggle').classList.toggle('on')">
+                  <span class="toggle" id="subSrArchiveToggle" style="display:inline-block;flex:none;"></span> Archive
+                </span>
+                <span style="display:inline-flex;align-items:center;gap:8px;font-size:13px;color:var(--ink-2);cursor:pointer;" onclick="if(!event.target.closest('.toggle')) this.querySelector('.toggle').classList.toggle('on')">
+                  <span class="toggle" id="subSrTrashToggle" style="display:inline-block;flex:none;"></span> Trash
+                </span>
               </div>
             </div>
 
