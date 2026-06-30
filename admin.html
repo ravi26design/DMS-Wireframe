@@ -2150,6 +2150,20 @@
   .adv-search-panel .filter-field { width: 100%; min-width: 0; }
   .adv-search-panel .select-control { width: 100%; box-sizing: border-box; }
   .adv-search-panel .tag-input-wrap { width: 100%; box-sizing: border-box; }
+  /* Search-In toggles */
+  .sr-tog { display: inline-flex; align-items: center; gap: 11px; font-size: 13px; font-weight: 600; color: var(--ink-2); cursor: pointer; user-select: none; }
+  .sr-toggle {
+    position: relative; width: 42px; height: 24px; flex: none;
+    border-radius: 999px; background: var(--surface-3); border: 1px solid var(--line-2);
+    transition: background .15s, border-color .15s;
+  }
+  .sr-toggle::after {
+    content: ''; position: absolute; top: 2px; left: 2px;
+    width: 18px; height: 18px; border-radius: 50%; background: #fff;
+    box-shadow: 0 1px 2px rgba(0,0,0,.25); transition: left .18s ease;
+  }
+  .sr-toggle.on { background: var(--ink); border-color: var(--ink); }
+  .sr-toggle.on::after { left: 20px; }
   .filter-panel .filter-grid {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
@@ -7646,14 +7660,14 @@
             <div class="filter-field" style="grid-column: 1 / -1;">
               <div class="filter-label">Search in the Active, Archive, Trash documents</div>
               <div style="display:flex;align-items:center;gap:30px;padding-top:12px;flex-wrap:wrap;">
-                <span style="display:inline-flex;align-items:center;gap:10px;font-size:13px;font-weight:600;color:var(--ink-2);cursor:pointer;" onclick="if(!event.target.closest('.toggle')) this.querySelector('.toggle').classList.toggle('on')">
-                  <span class="toggle on" id="subSrActiveToggle" style="display:inline-block;flex:none;border:1.5px solid var(--ink);"></span> Active
+                <span class="sr-tog" onclick="this.querySelector('.sr-toggle').classList.toggle('on')">
+                  <span class="sr-toggle on" id="subSrActiveToggle"></span> Active
                 </span>
-                <span style="display:inline-flex;align-items:center;gap:10px;font-size:13px;font-weight:600;color:var(--ink-2);cursor:pointer;" onclick="if(!event.target.closest('.toggle')) this.querySelector('.toggle').classList.toggle('on')">
-                  <span class="toggle" id="subSrArchiveToggle" style="display:inline-block;flex:none;border:1.5px solid var(--ink-3);"></span> Archive
+                <span class="sr-tog" onclick="this.querySelector('.sr-toggle').classList.toggle('on')">
+                  <span class="sr-toggle" id="subSrArchiveToggle"></span> Archive
                 </span>
-                <span style="display:inline-flex;align-items:center;gap:10px;font-size:13px;font-weight:600;color:var(--ink-2);cursor:pointer;" onclick="if(!event.target.closest('.toggle')) this.querySelector('.toggle').classList.toggle('on')">
-                  <span class="toggle" id="subSrTrashToggle" style="display:inline-block;flex:none;border:1.5px solid var(--ink-3);"></span> Trash
+                <span class="sr-tog" onclick="this.querySelector('.sr-toggle').classList.toggle('on')">
+                  <span class="sr-toggle" id="subSrTrashToggle"></span> Trash
                 </span>
               </div>
             </div>
