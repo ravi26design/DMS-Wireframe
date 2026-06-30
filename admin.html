@@ -8373,10 +8373,6 @@
                   </button>
                 </div>
                 <div class="sp-copied-msg" id="sdCopiedMsg">Link copied!</div>
-                <div id="sdEditLockNote" style="display:none;margin-top:10px;padding:9px 11px;border:1px solid var(--line);border-radius:8px;background:var(--surface-2);font-size:11.5px;color:var(--ink-3);line-height:1.55;">
-                  Editable links allow <b style="color:var(--ink-2);">one editor at a time</b> — others are locked out while someone is editing.
-                  <button type="button" id="sdSimEditorBtn" style="display:block;margin-top:7px;padding:5px 10px;border:1px solid var(--line-2);border-radius:6px;background:var(--surface);color:var(--ink-2);font-size:11px;font-weight:600;cursor:pointer;font-family:inherit;">▶ Simulate another user editing</button>
-                </div>
               </div>
               <div class="sp-divider"></div>
               <div class="sp-section" id="sdInviteSection">
@@ -14966,8 +14962,8 @@
     const _sw = document.querySelector('#sdTopActions .share-wrap'); if (_sw) _sw.style.display = '';
     const _rb = document.getElementById('sdRestoreBtn'); if (_rb) _rb.style.display = 'none';
     const _dl = document.getElementById('sdDownloadBtn'); if (_dl) _dl.style.display = '';
-    // Invite people — only when the user can edit this document; reset per document
-    const _inv = document.getElementById('sdInviteSection'); if (_inv) _inv.style.display = canModify ? '' : 'none';
+    // Invite people — available in the Documents share popover; reset per document
+    const _inv = document.getElementById('sdInviteSection'); if (_inv) _inv.style.display = '';
     const _invList = document.getElementById('sdInvitedList'); if (_invList) _invList.innerHTML = '';
     const _invInput = document.getElementById('sdInviteInput'); if (_invInput) _invInput.value = '';
 
