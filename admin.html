@@ -2164,6 +2164,10 @@
   }
   .sr-toggle.on { background: var(--ink); border-color: var(--ink); }
   .sr-toggle.on::after { left: 20px; }
+  /* Source badge on search results from Archive / Trash */
+  .src-badge { display: inline-flex; align-items: center; margin-left: 9px; padding: 2px 9px; border-radius: 999px; font-size: 10px; font-weight: 700; letter-spacing: 0.04em; text-transform: uppercase; flex: none; white-space: nowrap; }
+  .src-badge.src-archive { background: var(--surface-3); color: var(--ink-2); border: 1px solid var(--line-2); }
+  .src-badge.src-trash { background: #fef2f2; color: #DC2626; border: 1px solid #fecaca; }
   .filter-panel .filter-grid {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
@@ -13198,8 +13202,17 @@
       const fileType = document.querySelector('[data-dropdown="subsr-filetype"] .select-option.selected')?.textContent.trim() || 'All Types';
       const vis      = document.querySelector('[data-dropdown="subsr-visibility"] .select-option.selected')?.textContent.trim() || 'All';
 
+      // Search-In scope toggles
+      const inclActive  = document.getElementById('subSrActiveToggle')?.classList.contains('on');
+      const inclArchive = document.getElementById('subSrArchiveToggle')?.classList.contains('on');
+      const inclTrash   = document.getElementById('subSrTrashToggle')?.classList.contains('on');
+
       const subTbl   = document.getElementById('submissionTable');
+      const tbody    = subTbl?.querySelector('tbody');
       let visible = 0;
+
+      // Drop any rows injected by a previous Archive/Trash search
+      tbody?.querySelectorAll('tr.adv-extra-row').forEach(r => r.remove());
 
       subTbl?.querySelectorAll('tbody tr').forEach(row => {
         const name     = row.querySelector('.name')?.textContent || '';
@@ -13218,16 +13231,44 @@
         const dateToOk   = !dateTo   || rowDate <= dateTo;
         const themeOk    = theme    === 'All Themes' || deriveTheme(name)              === theme;
         const typeOk     = fileType === 'All Types'  || deriveFileType(name)           === fileType;
-        const visOk      = vis      === 'All'        || deriveVisibility(name, row.dataset) === vis;
 
         // Folders pass tag + theme/type filter; skip owner/date (no metadata)
-        const show = isFolder
-          ? (tagsOk && themeOk && typeOk && visOk)
-          : (tagsOk && ownerOk && dateFromOk && dateToOk && themeOk && typeOk && visOk);
+        const matched = isFolder
+          ? (tagsOk && themeOk && typeOk)
+          : (tagsOk && ownerOk && dateFromOk && dateToOk && themeOk && typeOk);
+        // Active documents only shown when the Active toggle is on
+        const show = inclActive && matched;
 
         row.style.display = show ? '' : 'none';
         if (show) visible++;
       });
+
+      // Inject matching Archive / Trash documents with a source badge
+      function injectFrom(pageSel, src) {
+        document.querySelectorAll(pageSel + ' tbody tr').forEach(r => {
+          const nm = r.querySelector('.name')?.textContent.trim() || '';
+          if (!nm) return;
+          const dt = r.cells[2]?.textContent.trim() || '—';
+          const tagsOk  = !tags.length || tags.every(t => nm.toLowerCase().includes(t) || deriveTheme(nm).toLowerCase().includes(t));
+          const themeOk = theme    === 'All Themes' || deriveTheme(nm)    === theme;
+          const typeOk  = fileType === 'All Types'  || deriveFileType(nm) === fileType;
+          const ownerOk = !owner;   // archive/trash docs have no owner metadata here
+          if (!(tagsOk && themeOk && typeOk && ownerOk)) return;
+          const badgeCls = src === 'deleted' ? 'src-trash' : 'src-archive';
+          const badgeTxt = src === 'deleted' ? 'Trash' : 'Archive';
+          const tr = document.createElement('tr');
+          tr.className = 'adv-extra-row';
+          tr.dataset.src = src;
+          tr.dataset.arcdate = dt;
+          tr.innerHTML =
+            '<td><div class="cell-doc"><div class="doc-icon"><svg><use href="#i-doc"/></svg></div><div class="name">' + nm + '</div><span class="src-badge ' + badgeCls + '">' + badgeTxt + '</span></div></td>' +
+            '<td>—</td><td>—</td><td>' + dt + '</td><td></td>';
+          tbody?.appendChild(tr);
+          visible++;
+        });
+      }
+      if (inclArchive) injectFrom('[data-page="archive"]', 'archive');
+      if (inclTrash)   injectFrom('[data-page="deleted"]', 'deleted');
 
       const subEmpty = document.getElementById('subEmpty');
       if (subEmpty) subEmpty.classList.toggle('show', visible === 0);
@@ -13312,6 +13353,11 @@
         }
         sc.classList.remove('open');
       });
+      // Reset Search-In toggles (Active on, Archive/Trash off) + drop injected rows
+      document.getElementById('subSrActiveToggle')?.classList.add('on');
+      document.getElementById('subSrArchiveToggle')?.classList.remove('on');
+      document.getElementById('subSrTrashToggle')?.classList.remove('on');
+      document.getElementById('submissionTable')?.querySelectorAll('tbody tr.adv-extra-row').forEach(r => r.remove());
       // Restore all rows
       document.getElementById('submissionTable')?.querySelectorAll('tbody tr').forEach(r => r.style.display = '');
       const subEmpty = document.getElementById('subEmpty');
@@ -14925,7 +14971,7 @@
   window.openArchivedDocDetail = function (srcRow, sourcePage) {
     if (!srcRow) return;
     const name = srcRow.querySelector('.name')?.textContent.trim() || 'Document';
-    const date = srcRow.cells[2]?.textContent.trim() || '—';
+    const date = srcRow.dataset.arcdate || srcRow.cells[2]?.textContent.trim() || '—';
     // Build a synthetic submission-style row: Name | Owner | (date) | (size) | Actions
     const tr = document.createElement('tr');
     tr.dataset.owner = '—';
@@ -14977,6 +15023,8 @@
       if (nameCell) {
         const row = e.target.closest('tr');
         if (!row || row.dataset.type === 'folder') return; // folders handled by IIFE
+        // Archive/Trash search-result rows open in the read-only archive view
+        if (row.dataset.src) { window.openArchivedDocDetail?.(row, row.dataset.src === 'deleted' ? 'deleted' : 'archive'); return; }
         openSubmissionDetail(row, null);
       }
     });
