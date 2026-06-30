@@ -7652,15 +7652,18 @@
               <div class="tag-suggestions" id="subSrTagSugg"></div>
             </div>
 
-            <!-- Search In (include Archive / Trash) -->
-            <div class="filter-field">
-              <div class="filter-label">Search In</div>
-              <div style="display:flex;align-items:center;gap:22px;padding-top:9px;">
-                <span style="display:inline-flex;align-items:center;gap:8px;font-size:13px;color:var(--ink-2);cursor:pointer;" onclick="if(!event.target.closest('.toggle')) this.querySelector('.toggle').classList.toggle('on')">
-                  <span class="toggle" id="subSrArchiveToggle" style="display:inline-block;flex:none;"></span> Archive
+            <!-- Search In (Active / Archive / Trash documents) -->
+            <div class="filter-field" style="grid-column: 1 / -1;">
+              <div class="filter-label">Search in the Active, Archive, Trash documents</div>
+              <div style="display:flex;align-items:center;gap:30px;padding-top:12px;flex-wrap:wrap;">
+                <span style="display:inline-flex;align-items:center;gap:10px;font-size:13px;font-weight:600;color:var(--ink-2);cursor:pointer;" onclick="if(!event.target.closest('.toggle')) this.querySelector('.toggle').classList.toggle('on')">
+                  <span class="toggle on" id="subSrActiveToggle" style="display:inline-block;flex:none;border:1.5px solid var(--ink);"></span> Active
                 </span>
-                <span style="display:inline-flex;align-items:center;gap:8px;font-size:13px;color:var(--ink-2);cursor:pointer;" onclick="if(!event.target.closest('.toggle')) this.querySelector('.toggle').classList.toggle('on')">
-                  <span class="toggle" id="subSrTrashToggle" style="display:inline-block;flex:none;"></span> Trash
+                <span style="display:inline-flex;align-items:center;gap:10px;font-size:13px;font-weight:600;color:var(--ink-2);cursor:pointer;" onclick="if(!event.target.closest('.toggle')) this.querySelector('.toggle').classList.toggle('on')">
+                  <span class="toggle" id="subSrArchiveToggle" style="display:inline-block;flex:none;border:1.5px solid var(--ink-3);"></span> Archive
+                </span>
+                <span style="display:inline-flex;align-items:center;gap:10px;font-size:13px;font-weight:600;color:var(--ink-2);cursor:pointer;" onclick="if(!event.target.closest('.toggle')) this.querySelector('.toggle').classList.toggle('on')">
+                  <span class="toggle" id="subSrTrashToggle" style="display:inline-block;flex:none;border:1.5px solid var(--ink-3);"></span> Trash
                 </span>
               </div>
             </div>
