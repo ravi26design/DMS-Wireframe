@@ -8381,17 +8381,7 @@
                   <input type="text" id="sdInviteInput" placeholder="Search people or enter email…" autocomplete="off" style="width:100%;box-sizing:border-box;padding:9px 11px;border:1px solid var(--line-2);border-radius:8px;font-size:12.5px;font-family:inherit;color:var(--ink);outline:none;background:var(--surface);" />
                   <div id="sdInviteSugg" style="display:none;position:absolute;top:calc(100% + 4px);left:0;right:0;background:var(--surface);border:1px solid var(--line);border-radius:8px;box-shadow:0 8px 24px rgba(0,0,0,.12);z-index:60;max-height:184px;overflow-y:auto;padding:4px;"></div>
                 </div>
-                <div style="display:flex;gap:8px;margin-top:8px;align-items:stretch;">
-                  <div class="select-control" id="sdInviteAccess" style="flex:1;padding-top:0;padding-bottom:0;">
-                    <span class="select-value" style="font-size:12px;">Can view</span>
-                    <svg><use href="#i-chevron"/></svg>
-                    <div class="select-menu">
-                      <div class="select-option selected">Can view</div>
-                      <div class="select-option">Can edit</div>
-                    </div>
-                  </div>
-                  <button class="btn primary" id="sdInviteBtn" style="padding:0 16px;font-size:12px;">Invite</button>
-                </div>
+                <button class="btn primary" id="sdInviteBtn" style="margin-top:8px;width:100%;padding:9px 0;font-size:12px;">Invite</button>
                 <div id="sdInvitedList" style="margin-top:10px;display:flex;flex-direction:column;gap:7px;"></div>
               </div>
               <div class="sp-divider"></div>
@@ -17552,7 +17542,6 @@
       const sugg  = document.getElementById('sdInviteSugg');
       const list  = document.getElementById('sdInvitedList');
       const btn   = document.getElementById('sdInviteBtn');
-      const access= document.getElementById('sdInviteAccess');
       if (!input || !btn) return;
       const PEOPLE = [
         { name: 'Priya Sharma',  email: 'priya@fes.org.in',  init: 'PS' },
@@ -17597,7 +17586,8 @@
         e.stopPropagation();
         const val = input.value.trim();
         if (!val) { window.showToast?.('Search a person or enter an email'); return; }
-        const acc = access?.querySelector('.select-option.selected')?.textContent.trim() || 'Can view';
+        const topAcc = document.querySelector('#sdSharePopover .sp-access .vis-btn.active')?.dataset.access;
+        const acc = topAcc === 'edit' ? 'Can edit' : 'Can view';
         const person = chosen || { name: val, email: val, init: (val[0] || '?').toUpperCase() };
         const row = document.createElement('div');
         row.style.cssText = 'display:flex;align-items:center;gap:9px;';
