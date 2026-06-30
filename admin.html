@@ -11591,12 +11591,13 @@
   /* ===== Archive / Trash — view document by clicking the row ===== */
   (function () {
     document.addEventListener('click', (e) => {
-      const row = e.target.closest('[data-page="archive"] tbody tr, [data-page="deleted"] tbody tr');
+      const arcRow   = e.target.closest('[data-page="archive"] tbody tr');
+      const trashRow = e.target.closest('[data-page="deleted"] tbody tr');
+      const row = arcRow || trashRow;
       if (!row) return;
       // ignore clicks on the row action buttons (Restore / Download / etc.)
       if (e.target.closest('.cell-actions')) return;
-      const name = row.querySelector('.name')?.textContent.trim() || 'document';
-      window.showToast?.('Opening "' + name + '"…');
+      window.openArchivedDocDetail?.(row, arcRow ? 'archive' : 'deleted');
     });
   })();
 
@@ -14666,6 +14667,7 @@
   function openSubmissionDetail(row, fromFolder) {
     if (!row) return;
     currentSubmissionRow = row;
+    window._sdReturnPage = 'submission'; // normal Documents flow returns to Documents
     window.sdReleaseEditLock?.(); // clear any edit-lock state when opening a doc
     // If this document is currently being edited by another user, show it locked
     if (row.dataset.lockedBy) {
@@ -14813,6 +14815,30 @@
     document.querySelector('.nav-item[data-target="submission"]')?.classList.add('active');
     window.scrollTo(0, 0);
   }
+
+  // Open an Archive/Trash document in the same document-detail view (read-only)
+  window.openArchivedDocDetail = function (srcRow, sourcePage) {
+    if (!srcRow) return;
+    const name = srcRow.querySelector('.name')?.textContent.trim() || 'Document';
+    const date = srcRow.cells[2]?.textContent.trim() || '—';
+    // Build a synthetic submission-style row: Name | Owner | (date) | (size) | Actions
+    const tr = document.createElement('tr');
+    tr.dataset.owner = '—';
+    tr.innerHTML =
+      '<td><div class="cell-doc"><div class="doc-icon"><svg><use href="#i-doc"/></svg></div><div class="name">' + name + '</div></div></td>' +
+      '<td>—</td><td>' + date + '</td><td>—</td><td></td>';
+    openSubmissionDetail(tr, null);
+    // Re-point the detail to the Archive/Trash context + force read-only
+    window._sdReturnPage = sourcePage;                    // 'archive' | 'deleted'
+    const label = sourcePage === 'deleted' ? 'Trash' : 'Archive';
+    const bl = document.getElementById('sdBackLabel'); if (bl) bl.textContent = label;
+    const br = document.getElementById('sdBrFile'); if (br) br.textContent = name;
+    document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+    document.querySelector('.nav-item[data-target="' + sourcePage + '"]')?.classList.add('active');
+    ['sdEditBtn','sdReuploadBtn','sdDeleteBtn','sdEditDetailsBtn'].forEach(id => {
+      const el = document.getElementById(id); if (el) el.style.display = 'none';
+    });
+  };
 
   // Submission table clicks — folder rows handled by folder-nav IIFE below
   if (submissionTable) {
@@ -15126,15 +15152,17 @@
 
   // Back button on submission-detail
   document.getElementById('backToSubmission')?.addEventListener('click', () => {
+    const ret = window._sdReturnPage || 'submission';
     document.querySelectorAll('.page').forEach(p => p.classList.add('hidden'));
-    document.querySelector('[data-page="submission"]').classList.remove('hidden');
+    document.querySelector('[data-page="' + ret + '"]')?.classList.remove('hidden');
     document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
-    document.querySelector('.nav-item[data-target="submission"]')?.classList.add('active');
-    // Restore folder view if we came from one
-    const folder = window._sdReturnFolder;
-    if (folder && window.subOpenFolder) {
-      window.subOpenFolder(folder);
+    document.querySelector('.nav-item[data-target="' + ret + '"]')?.classList.add('active');
+    // Restore folder view only when returning to Documents
+    if (ret === 'submission') {
+      const folder = window._sdReturnFolder;
+      if (folder && window.subOpenFolder) window.subOpenFolder(folder);
     }
+    window._sdReturnPage = 'submission';
     window.scrollTo(0, 0);
   });
 
