@@ -10061,7 +10061,7 @@
     <div class="modal-head">
       <div>
         <h2>Add Tag</h2>
-        <p>Create a tag and map it to a theme and department</p>
+        <p>Create a new tag</p>
       </div>
       <div class="modal-close" onclick="window.closeAddTagModal()">
         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
@@ -10071,39 +10071,6 @@
       <div class="field full">
         <label>Tag Name</label>
         <div class="control"><input type="text" id="addTagName" placeholder="Enter tag name" /></div>
-      </div>
-      <div class="field full">
-        <label>Theme</label>
-        <div class="select-control" id="addTagTheme">
-          <span class="select-value placeholder">Select theme</span>
-          <svg><use href="#i-chevron"/></svg>
-          <div class="select-menu">
-            <div class="select-option">NRM</div>
-            <div class="select-option">Forest</div>
-            <div class="select-option">Livelihood</div>
-            <div class="select-option">Water</div>
-            <div class="select-option">Land Rights</div>
-            <div class="select-option">Agriculture</div>
-            <div class="select-option">Governance</div>
-            <div class="select-option">Climate</div>
-          </div>
-        </div>
-      </div>
-      <div class="field full">
-        <label>Department</label>
-        <div class="select-control" id="addTagDept">
-          <span class="select-value placeholder">Select department</span>
-          <svg><use href="#i-chevron"/></svg>
-          <div class="select-menu">
-            <div class="select-option">Administration</div>
-            <div class="select-option">Compliance</div>
-            <div class="select-option">Field Ops</div>
-            <div class="select-option">Finance</div>
-            <div class="select-option">HR</div>
-            <div class="select-option">Legal</div>
-            <div class="select-option">Operations</div>
-          </div>
-        </div>
       </div>
     </div>
     <div class="modal-actions">
@@ -13578,41 +13545,24 @@
       window.showToast?.('Category "' + name + '" added');
     });
 
-    // ----- Tag modal (Add / Edit) -----
+    // ----- Tag modal (Add) -----
     const tagModal = document.getElementById('addTagModal');
-    const tagTheme = document.getElementById('addTagTheme');
-    const tagDept  = document.getElementById('addTagDept');
-    let tagEditRow = null;
-    window.openAddTagModal  = function (row) {
-      tagEditRow = row || null;
-      tagModal.querySelector('h2').textContent = row ? 'Edit Tag' : 'Add Tag';
-      tagModal.querySelector('.modal-head p').textContent = row ? 'Update tag details' : 'Create a tag and map it to a theme and department';
-      document.getElementById('addTagSave').textContent = row ? 'Save Changes' : '+ Add Tag';
-      document.getElementById('addTagName').value = row ? row.querySelector('.pill.ink').textContent.trim() : '';
-      setSelect(tagTheme, row ? row.querySelector('td:nth-child(2) .pill').textContent.trim() : '', 'Select theme');
-      setSelect(tagDept,  row ? row.children[2].textContent.trim() : '', 'Select department');
+    window.openAddTagModal  = function () {
+      tagModal.querySelector('h2').textContent = 'Add Tag';
+      tagModal.querySelector('.modal-head p').textContent = 'Create a new tag';
+      document.getElementById('addTagSave').textContent = '+ Add Tag';
+      document.getElementById('addTagName').value = '';
       tagModal.classList.add('show'); document.body.style.overflow = 'hidden';
     };
-    window.closeAddTagModal = function () { tagModal.classList.remove('show'); document.body.style.overflow = ''; tagEditRow = null; };
+    window.closeAddTagModal = function () { tagModal.classList.remove('show'); document.body.style.overflow = ''; };
     tagModal?.addEventListener('click', e => { if (e.target === tagModal) window.closeAddTagModal(); });
     document.getElementById('addTagSave')?.addEventListener('click', () => {
       const name = (document.getElementById('addTagName').value || '').trim();
-      const theme = tagTheme.querySelector('.select-value');
-      const dept  = tagDept.querySelector('.select-value');
       if (!name) { window.showToast?.('Enter a tag name'); return; }
-      if (theme.classList.contains('placeholder')) { window.showToast?.('Select a theme'); return; }
-      if (dept.classList.contains('placeholder'))  { window.showToast?.('Select a department'); return; }
-      if (tagEditRow) {
-        tagEditRow.querySelector('.pill.ink').textContent = name;
-        tagEditRow.querySelector('td:nth-child(2) .pill').textContent = theme.textContent;
-        tagEditRow.children[2].textContent = dept.textContent;
-        window.closeAddTagModal(); window.showToast?.('Tag updated'); return;
-      }
       const u = curUser();
       const tr = document.createElement('tr');
       tr.innerHTML = '<td><span class="pill ink">' + name + '</span></td>' +
-        '<td><span class="pill">' + theme.textContent + '</span></td>' +
-        '<td>' + dept.textContent + '</td>' + ownerCell(u) + '<td>' + today() +
+        ownerCell(u) + '<td>' + today() +
         '</td><td><div style="display:flex;gap:6px;justify-content:flex-end;"><button class="icon-btn tc-del" title="Delete"><svg><use href="#i-trash"/></svg></button></div></td>';
       (document.querySelector('[data-tcpanel="tags"] [data-tagpanel]:not(.hidden) tbody')
         || document.querySelector('[data-tcpanel="tags"] tbody')).appendChild(tr);
